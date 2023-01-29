@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Daily Report Management</string>
+    <string name="report_management_system">Report Management System</string>
+    <string name="all_students">All Students</string>
+    <string name="add_daily_report">Add Daily Report</string>
+    <string name="get_report">Get Report</string>
+    <string name="delete">Delete</string>
+    <string name="add_student">Add Student</string>
+</resources>
