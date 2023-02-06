@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
         dbHelper=new DbHelper(this);
         spinner=findViewById(R.id.spinner);
 
-
         loadStudents();
     }
 
@@ -41,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
     }
     public void addReportClicked(View view){
 
+
+        Intent intent=new Intent(this,addReport.class);
+        intent.putExtra("id",(int)spinner.getSelectedItemId());
+        intent.putExtra("name",spinner.getSelectedItem().toString());
+        startActivity(intent);
     }
     public void getReportClicked(View view){
 

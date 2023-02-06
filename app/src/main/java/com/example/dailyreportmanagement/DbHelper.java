@@ -8,8 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -26,14 +30,14 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String ReportColumnID="id";
     public static final String ReportColumnStudentID="StudentID";
     public static final String ReportColumnDate="Date";
-    //public static final String ReportColumnPara="ParaNumber";
+    public static final String ReportColumnPara="ParaNumber";
     public static final String ReportColumnSabak="Sabak";
     public static final String ReportColumnSabaki="Sabaki";
     public static final String ReportColumnManzal="Manzal";
 
 
     public DbHelper(@Nullable Context context) {
-        super(context, dbName, null, 1);
+        super(context, dbName, null, 2);
     }
 
     @Override
@@ -49,8 +53,9 @@ public class DbHelper extends SQLiteOpenHelper {
                 + ReportColumnID + " integer primary key autoincrement, "
                 + ReportColumnStudentID + " integer not null, "//Foreign key refrences " + studentTableName + "("+ columnID +"),"
                 + ReportColumnDate + " date not null, "
+                + ReportColumnPara + " integer, "
                 + ReportColumnSabak + " integer, "
-                + ReportColumnSabaki + " integer, "
+                + ReportColumnSabaki + " varchar(10), "
                 + ReportColumnManzal + " integer, "
                 + "CONSTRAINT FK_StudentID FOREIGN KEY ("+ReportColumnStudentID+")" + " REFERENCES "+ studentTableName +"(" + columnID +"))";
 
@@ -101,7 +106,44 @@ public class DbHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return list;
+    }
 
+    public boolean addReport(Report report){
+        SimpleDateFormat dateFormat=new SimpleDateFormat("dd-mm-yyyy");
+        String date=new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(ReportColumnStudentID,report.StdID);
+        values.put(ReportColumnDate,date);
+        values.put(ReportColumnPara,report.para);
+        values.put(ReportColumnSabak,report.lines);
+        values.put(ReportColumnSabaki,report.sabki);
+        values.put(ReportColumnManzal,report.manzal);
+
+        if(db.insert(reportTableName,null,values)!=-1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public Report getReport(long id){
+        SQLiteDatabase db=this.getReadableDatabase();
+        String sql="select * "
+                + "from "+reportTableName
+                + " where "+ ReportColumnStudentID
+                + "="+id + " Order by "+ ReportColumnID +" desc limit 1;";
+        //db.execSQL(sql);
+        Cursor cursor= db.rawQuery(sql,null);
+        if(cursor.moveToFirst()){
+            Report r=new Report(cursor.getInt(0),cursor.getInt(1),cursor.getInt(2),cursor.getInt(3),cursor.getString(5),cursor.getInt(6));
+            db.close();
+            return r;
+        }else{
+            db.close();
+            Report report=new Report(0,0,0,"false",0);
+            return report;
+        }
     }
 
 

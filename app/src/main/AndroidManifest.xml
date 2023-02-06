@@ -13,6 +13,13 @@
         android:theme="@style/Theme.DailyReportManagement"
         tools:targetApi="31">
         <activity
+            android:name=".addReport"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".addStudent"
             android:exported="false">
             <meta-data
