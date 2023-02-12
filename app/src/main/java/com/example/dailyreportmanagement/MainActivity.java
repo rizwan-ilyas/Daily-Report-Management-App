@@ -31,6 +31,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    public void allStudentClicked(View view){
+        Intent intent=new Intent(this,RecyclerViewActivity.class);
+        intent.putExtra("identifier","students");
+        startActivity(intent);
+
+    }
+
     public void addClicked(View view){
         Intent intent=new Intent(this,addStudent.class);
         startActivity(intent);
@@ -47,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
     public void getReportClicked(View view){
-
+        Intent intent=new Intent(this,RecyclerViewActivity.class);
+        intent.putExtra("identifier","reports");
+        intent.putExtra("id",spinner.getSelectedItemId());
+        startActivity(intent);
     }
 
 

@@ -37,7 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
     public DbHelper(@Nullable Context context) {
-        super(context, dbName, null, 2);
+        super(context, dbName, null, 3);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DbHelper extends SQLiteOpenHelper {
         String reportTable = "CREATE TABLE IF NOT EXISTS " + reportTableName + "("
                 + ReportColumnID + " integer primary key autoincrement, "
                 + ReportColumnStudentID + " integer not null, "//Foreign key refrences " + studentTableName + "("+ columnID +"),"
-                + ReportColumnDate + " date not null, "
+                + ReportColumnDate + " varchar(10) not null, "
                 + ReportColumnPara + " integer, "
                 + ReportColumnSabak + " integer, "
                 + ReportColumnSabaki + " varchar(10), "
@@ -69,9 +69,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        String delStudent="drop table if exists "+ studentTableName;
+        //String delStudent="drop table if exists "+ studentTableName;
         String delReport="drop table if exists "+ reportTableName;
-        sqLiteDatabase.execSQL(delStudent);
+        //sqLiteDatabase.execSQL(delStudent);
         sqLiteDatabase.execSQL(delReport);
         onCreate(sqLiteDatabase);
     }
@@ -108,6 +108,23 @@ public class DbHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public List<Student> getStudentsData(){
+        String query="select * from "+studentTableName + ";";
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor cursor=db.rawQuery(query,null);
+        //List<Student> list=null;
+        List<Student> list=new ArrayList<Student>();
+        if(cursor.moveToFirst()){
+            do{
+                list.add(new Student(cursor.getInt(0),cursor.getString(1),cursor.getString(2),cursor.getString(3)));
+                //list.add(cursor.getString(1));
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
+
     public boolean addReport(Report report){
         SimpleDateFormat dateFormat=new SimpleDateFormat("dd-mm-yyyy");
         String date=new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
@@ -128,7 +145,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public Report getReport(long id){
-        SQLiteDatabase db=this.getReadableDatabase();
+        SQLiteDatabase db=this.getWritableDatabase();
         String sql="select * "
                 + "from "+reportTableName
                 + " where "+ ReportColumnStudentID
@@ -136,7 +153,7 @@ public class DbHelper extends SQLiteOpenHelper {
         //db.execSQL(sql);
         Cursor cursor= db.rawQuery(sql,null);
         if(cursor.moveToFirst()){
-            Report r=new Report(cursor.getInt(0),cursor.getInt(1),cursor.getInt(2),cursor.getInt(3),cursor.getString(5),cursor.getInt(6));
+            Report r=new Report(cursor.getInt(0),cursor.getInt(1),cursor.getInt(3),cursor.getInt(4),cursor.getString(5),cursor.getInt(6));
             db.close();
             return r;
         }else{
@@ -146,6 +163,25 @@ public class DbHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<Report> getReportsData(long id){
+        SQLiteDatabase db=this.getReadableDatabase();
+        String sql="select * "
+                + "from "+reportTableName
+                + " where "+ ReportColumnStudentID
+                + "="+id + " Order by "+ ReportColumnID;
+        //db.execSQL(sql);
+        Cursor cursor= db.rawQuery(sql,null);
+        List<Report> list=new ArrayList<Report>();
+        if(cursor.moveToFirst()){
+            do {
+                Report r = new Report(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4), cursor.getString(5), cursor.getInt(6));
+                list.add(r);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return list;
+    }
 
 
 

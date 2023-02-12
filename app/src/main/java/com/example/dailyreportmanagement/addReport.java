@@ -88,14 +88,13 @@ public class addReport extends AppCompatActivity {
         if(TextUtils.isEmpty(line.getText().toString())){
             return;
         }
-        int lines=0;
-        lines=Integer.valueOf(line.getText().toString());
+        int lines=Integer.valueOf(line.getText().toString());
 
 
-        String sbki=String.valueOf(sabki.isSelected());
-        boolean mnzl=mazal.isSelected();
+        String sbki=String.valueOf(sabki.isChecked());
+        boolean mnzl=mazal.isChecked();
 
-        Report report=dbHelper.getReport(id);
+        Report report=dbHelper.getReport(id+1);
         lines+=report.lines;
 
         int pra=getPara(lines);
